@@ -82,7 +82,7 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/mynewdb', {
+mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -96,7 +96,7 @@ app.get('/crash-test', () => {
 });
 
 app.use(require('./routes/users'));
-app.use(require('./routes/cards'));
+app.use(require('./routes/movies'));
 
 app.get('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });

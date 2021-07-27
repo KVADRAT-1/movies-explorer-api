@@ -10,11 +10,9 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.emailProcessing({ req, hash, next }))
     .then((user) => {
       res.status(200).send({
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        _id: user._id,
         email: user.email,
+        name: user.name,
+        _id: user._id,
       });
     })
     .catch((err) => {
