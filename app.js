@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const { errors } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const PORT = 3000;
+const PORT = 27015;
 const app = express();
 
 // Массив доменов, с которых разрешены кросс-доменные запросы
@@ -24,7 +24,7 @@ const allowedCors = [
   'http://diploma.kostin.nomoredomains.club/users/:me',
   'http://diploma.kostin.nomoredomains.club/movies',
   'http://diploma.kostin.nomoredomains.club/movies/:movieId',
-  'localhost:3000',
+  'localhost:27015',
 ];
 
 app.use((req, res, next) => {
