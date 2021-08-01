@@ -32,7 +32,7 @@ module.exports.login = (req, res) => {
         .status(401)
         .send({ message: err.message });
     });
-}; // логин
+}; // лог
 
 module.exports.returnUser = (req, res, next) => {
   const token = req.headers.authorization.replace('Bearer ', '');
