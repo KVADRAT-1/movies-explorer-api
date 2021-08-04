@@ -1,4 +1,6 @@
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken'); // Для создания токенов
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
@@ -11,7 +13,7 @@ module.exports = (req, res, next) => {
     const token = authorization.replace('Bearer ', '');
     let payload;
     try {
-      payload = jwt.verify(token, 'qwerty');
+      payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'qwerty');
     } catch (e) {
       const err = new Error('Необходима авторизация');
       err.statusCode = 401;

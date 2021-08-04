@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken'); // Для создания токенов
 const User = require('../models/user');
 const errorProcessing = require('../middlewares/errorProcessing');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const opts = { runValidators: true, new: true };
 
 module.exports.createUser = (req, res, next) => {
@@ -24,7 +26,7 @@ module.exports.login = (req, res) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'qwerty', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'qwerty', { expiresIn: '7d' });
       res.status(200).send({ token });
     })
     .catch((err) => {
@@ -32,12 +34,10 @@ module.exports.login = (req, res) => {
         .status(401)
         .send({ message: err.message });
     });
-}; // лог
+}; // логин
 
 module.exports.returnUser = (req, res, next) => {
-  const token = req.headers.authorization.replace('Bearer ', '');
-  const userId = jwt.verify(token, 'qwerty')._id;
-  User.findById(userId)
+  User.findById(req.user)
     .orFail(new Error('NotFoundId'))
     .then((user) => {
       res.status(200).send({ user });
@@ -47,19 +47,8 @@ module.exports.returnUser = (req, res, next) => {
     });
 }; // возвращает информацию о текущем пользователе
 
-module.exports.returnUserId = (req, res, next) => {
-  User.findById(req.params.me)
-    .orFail(new Error('NotFoundId'))
-    .then((user) => {
-      res.status(200).send({ user });
-    })
-    .catch((err) => {
-      errorProcessing(err, res, next);
-    });
-}; // возвращает информацию о текущем пользователе по id
-
 module.exports.updatesProfile = (req, res, next) => {
-  User.findByIdAndUpdate(req.params.me, { name: req.body.name }, opts)
+  User.findByIdAndUpdate(req.user, { name: req.body.name, email: req.body.email }, opts)
     .orFail(new Error('NotFoundId'))
     .then((user) => {
       res.status(200).send({ user });

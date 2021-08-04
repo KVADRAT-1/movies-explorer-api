@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken'); // Для создания токенов
 const validator = require('validator');
 const Movie = require('../models/movie');
 const errorProcessing = require('../middlewares/errorProcessing');
@@ -12,8 +11,7 @@ module.exports.returnMovies = (req, res, next) => {
 }; // возвращает все сохранённые пользователем фильмы
 
 module.exports.createMovie = (req, res, next) => {
-  const token = req.headers.authorization.replace('Bearer ', '');
-  const owner = jwt.verify(token, 'qwerty')._id;
+  const owner = req.user._id;
   const {
     country, director, duration, year, description,
     image, trailer, thumbnail, movieId, nameRU, nameEN,
@@ -50,19 +48,25 @@ module.exports.createMovie = (req, res, next) => {
 }; // создаёт фильм с переданными в теле country, director, duration ...
 
 module.exports.deleteMovie = (req, res, next) => {
-  const token = req.headers.authorization.replace('Bearer ', '');
-  const createrId = jwt.verify(token, 'qwerty')._id;
-  Movie.findByIdAndRemove(req.params.movieId)
+  const createrId = req.user._id;
+  Movie.findById(req.params.movieId)
     .orFail(new Error('NotValidId'))
     .then((movie) => {
       if (movie.owner === createrId) {
-        res.status(200).send({ movie });
+        Movie.findByIdAndRemove(req.params.movieId)
+          .orFail(new Error('NotValidId'))
+          .then((movieUser) => {
+            res.status(200).send({ movieUser });
+          })
+          .catch((err) => {
+            errorProcessing(err, res, next);
+          });
       } else {
         res.status(404).send({
-          message: 'У вас нет прав на удаление карточки.',
+          message: 'У вас нет прав на удаление фильма.',
         });
       }
-    })
+    }) // res.send({ data: movie.owner })
     .catch((err) => {
       errorProcessing(err, res, next);
     });

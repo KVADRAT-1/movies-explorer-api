@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -5,7 +6,7 @@ const helmet = require('helmet');
 const { errors } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const PORT = 27015;
+const PORT = 3000;
 const app = express();
 
 // Массив доменов, с которых разрешены кросс-доменные запросы
@@ -24,7 +25,7 @@ const allowedCors = [
   'http://diploma.kostin.nomoredomains.club/users/:me',
   'http://diploma.kostin.nomoredomains.club/movies',
   'http://diploma.kostin.nomoredomains.club/movies/:movieId',
-  'localhost:27015',
+  'localhost:3000',
 ];
 
 app.use((req, res, next) => {
@@ -87,6 +88,6 @@ app.use(errors());
 app.use((err, req, res, next) => {
   const status = err.statusCode || 500;
   const { message } = err;
-  res.status(status).json({ err: message || 'Произошла ошибка на сервере.' });
+  res.status(status).json({ err: `Произошла ошибка на сервере: ${message}` });
   return next();
 });

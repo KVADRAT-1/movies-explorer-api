@@ -6,7 +6,6 @@ const {
   createUser,
   login,
   returnUser,
-  returnUserId,
   updatesProfile,
 } = require('../controllers/users');
 
@@ -27,10 +26,10 @@ router.post('/signin', celebrate({
 router.use(auth);
 
 router.get('/users/me', returnUser); // возвращает информацию о текущем пользователе
-router.get('/users/:me', returnUserId); // возвращает информацию пользователя по id
-router.patch('/users/:me', celebrate({
+router.patch('/users/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
+    email: Joi.string().required(),
   }),
 }), updatesProfile); // обновляет профиль
 
