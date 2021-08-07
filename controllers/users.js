@@ -1,3 +1,4 @@
+const validator = require('validator');
 const bcrypt = require('bcryptjs'); // Для хеширования пароля
 const jwt = require('jsonwebtoken'); // Для создания токенов
 const User = require('../models/user');
@@ -48,6 +49,12 @@ module.exports.returnUser = (req, res, next) => {
 }; // возвращает информацию о текущем пользователе
 
 module.exports.updatesProfile = (req, res, next) => {
+  const processing = validator.isEmail(req.body.email, { require_protocol: true });
+  if (!processing) {
+    const error = new Error('Неправильный Email');
+    error.statusCode = 400;
+    next(error);
+  }
   User.findByIdAndUpdate(req.user, { name: req.body.name, email: req.body.email }, opts)
     .orFail(new Error('NotFoundId'))
     .then((user) => {

@@ -73,7 +73,7 @@ app.get('/crash-test', () => {
 app.use(require('./routes/users'));
 app.use(require('./routes/movies'));
 
-app.get('*', (req, res) => {
+app.all('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
