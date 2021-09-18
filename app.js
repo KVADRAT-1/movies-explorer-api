@@ -25,7 +25,7 @@ const allowedCors = [
   'http://diploma.kostin.nomoredomains.club/users/:me',
   'http://diploma.kostin.nomoredomains.club/movies',
   'http://diploma.kostin.nomoredomains.club/movies/:movieId',
-  'localhost:3000',
+
 ];
 
 app.use((req, res, next) => {
